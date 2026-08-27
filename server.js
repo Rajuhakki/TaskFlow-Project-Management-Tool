@@ -235,7 +235,7 @@ app.set('io', io);
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
 // Routes
@@ -249,14 +249,17 @@ app.use('/api/discussions', discussionRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/chat', chatRoutes);
 
-// Root Health Check Route
-app.get('/', (req, res) => {
-  res.status(200).json({ message: 'Project Management Real-Time Communication, WebRTC 1-on-1 & Zoom-like Group Video Call API is running smoothly' });
+// Health Check Route for Deployment Platforms
+app.get('/api/health', (req, res) => {
+  res.status(200).json({
+    status: 'OK',
+    message: 'Project Management Real-Time Communication, WebRTC 1-on-1 & Zoom-like Group Video Call API is running smoothly'
+  });
 });
 
-// 404 Route Handler
-app.use((req, res) => {
-  res.status(404).json({ message: 'Endpoint not found' });
+// Serve Single Page Application Frontend (index.html) for Root and Client Routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Database Connection & Server Initialization
