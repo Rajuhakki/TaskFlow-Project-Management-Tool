@@ -279,9 +279,12 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Serve Single Page Application Frontend (index.html) for Root and Client Routes
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// Serve Single Page Application Frontend (index.html) for Root and Client Routes (Express 5 Compatible)
+app.use((req, res, next) => {
+  if (req.method === 'GET' && !req.path.startsWith('/api')) {
+    return res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  }
+  next();
 });
 
 // Database Connection & Server Initialization for Local Environment
