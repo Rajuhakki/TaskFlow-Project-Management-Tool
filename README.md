@@ -5,7 +5,11 @@
 [![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-emerald.svg)](https://www.mongodb.com/)
 [![Socket.io](https://img.shields.io/badge/Socket.io-v4.8-black.svg)](https://socket.io/)
 [![WebRTC](https://img.shields.io/badge/WebRTC-Mesh%20Engine-orange.svg)](https://webrtc.org/)
+[![Vercel](https://img.shields.io/badge/Vercel-Deployed-000000?style=flat&logo=vercel&logoColor=white)](https://taskflow-three-eosin.vercel.app/)
 [![License](https://img.shields.io/badge/License-ISC-brightgreen.svg)](#license)
+
+🌐 **Live Application Demo**: [https://taskflow-three-eosin.vercel.app/](https://taskflow-three-eosin.vercel.app/)  
+📂 **GitHub Repository**: [https://github.com/Rajuhakki/TaskFlow-Project-Management-Tool](https://github.com/Rajuhakki/TaskFlow-Project-Management-Tool)
 
 **TaskFlow** (also known as **FlowBoard**) is an enterprise-grade, real-time project management and team collaboration platform. Built with a robust Node.js/Express backend and a responsive, high-performance vanilla JavaScript frontend, TaskFlow combines dynamic Kanban workflows, instant messaging, voice note recording, WebRTC multi-user video meetings, AI project assistance, and live telemetry analytics into a unified workspace.
 
@@ -189,7 +193,7 @@ JWT_SECRET=your_super_secret_jwt_key_here
 
 1. **Clone the Repository**
    ```bash
-   git clone https.github.com/Rajuhakki/TaskFlow-Project-Management-Tool.git
+   git clone https://github.com/Rajuhakki/TaskFlow-Project-Management-Tool.git
    cd TaskFlow-Project-Management-Tool
    ```
 
