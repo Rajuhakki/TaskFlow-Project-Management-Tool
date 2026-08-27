@@ -282,11 +282,16 @@ mongoose
   .connect(MONGO_URI)
   .then(() => {
     console.log('Connected to MongoDB successfully');
-    server.listen(PORT, () => {
-      console.log(`Server running with Socket.io on port ${PORT}`);
-    });
+    if (!process.env.VERCEL) {
+      server.listen(PORT, () => {
+        console.log(`Server running with Socket.io on port ${PORT}`);
+      });
+    }
   })
   .catch((err) => {
     console.error('Failed to connect to MongoDB:', err.message);
-    process.exit(1);
   });
+
+// Export Express app for Vercel deployment compatibility
+module.exports = app;
+
