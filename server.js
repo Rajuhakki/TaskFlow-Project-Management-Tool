@@ -238,6 +238,28 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
+// Serverless MongoDB Connection Guard
+let cachedDbPromise = null;
+const connectDB = async (req, res, next) => {
+  if (mongoose.connection.readyState >= 1) {
+    return next();
+  }
+  try {
+    if (!cachedDbPromise) {
+      cachedDbPromise = mongoose.connect(process.env.MONGO_URI);
+    }
+    await cachedDbPromise;
+    next();
+  } catch (err) {
+    cachedDbPromise = null;
+    console.error('MongoDB Serverless Connection Error:', err.message);
+    return res.status(500).json({ message: 'Database connection failed', error: err.message });
+  }
+};
+
+// Apply DB connection guard to all /api routes
+app.use('/api', connectDB);
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
@@ -262,35 +284,35 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Database Connection & Server Initialization
+// Database Connection & Server Initialization for Local Environment
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
 
-server.on('error', (error) => {
-  if (error.code === 'EADDRINUSE') {
-    const fallbackPort = Number(PORT) + 1;
-    console.warn(`⚠️ Port ${PORT} is busy. Falling back to port ${fallbackPort}...`);
-    server.listen(fallbackPort, () => {
-      console.log(`Server running with Socket.io on port ${fallbackPort}`);
-    });
-  } else {
-    console.error('Server error:', error.message);
-  }
-});
+if (!process.env.VERCEL) {
+  server.on('error', (error) => {
+    if (error.code === 'EADDRINUSE') {
+      const fallbackPort = Number(PORT) + 1;
+      console.warn(`⚠️ Port ${PORT} is busy. Falling back to port ${fallbackPort}...`);
+      server.listen(fallbackPort, () => {
+        console.log(`Server running with Socket.io on port ${fallbackPort}`);
+      });
+    } else {
+      console.error('Server error:', error.message);
+    }
+  });
 
-mongoose
-  .connect(MONGO_URI)
-  .then(() => {
-    console.log('Connected to MongoDB successfully');
-    if (!process.env.VERCEL) {
+  mongoose
+    .connect(MONGO_URI)
+    .then(() => {
+      console.log('Connected to MongoDB successfully');
       server.listen(PORT, () => {
         console.log(`Server running with Socket.io on port ${PORT}`);
       });
-    }
-  })
-  .catch((err) => {
-    console.error('Failed to connect to MongoDB:', err.message);
-  });
+    })
+    .catch((err) => {
+      console.error('Failed to connect to MongoDB:', err.message);
+    });
+}
 
 // Export Express app for Vercel deployment compatibility
 module.exports = app;
